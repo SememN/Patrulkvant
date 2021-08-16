@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      #map {
+        height: 100%;
+      }
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+	<style>
+		.hide{
+			display:none;
+		}
+	</style>
+	<script>
+		function sendCoords (e) {
+			if (points_cain) {
+				let pricol = JSON.stringify(points_cain);
+				$.post("./", {
+					most: pricol
+				})
+				.done(function(data) {
+					console.log("pricol");
+				});
+				return false
+			}
+		}
+	</script>
+	<script src="http://code.jquery.com/jquery-3.6.0.js"></script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsw8iKKW1a6gmOjqqz10flbhHbCo_6OdQ
+        &libraries=visualization&callback=initMap">
+    </script>
+	
+	<input type="submit" id="send" value="Ћтправить" />
+	
+    <script>
+		let points = [];
+        var points_cain = [];
+        let data = {
+            lat: null,
+            lng: null
+        };
+		let isFinal = false;
+		
+        function initMap() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 0, lng: 0},
+            zoom: 12,
+            styles: [{
+            featureType: 'poi',
+            stylers: [{ visibility: 'off' }]
+                }, {
+                featureType: 'transit.station',
+                stylers: [{ visibility: 'off' }]
+                }],
+                disableDoubleClickZoom: true,
+                streetViewControl: false
+            });
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        map.setCenter(pos);
+                    }
+                )
+            }
+			
+			
+			
+            function makeInfoBox(controlDiv, map, text, isFinal) {
+                let controlUI = document.createElement('div');
+                controlUI.style.boxShadow = 'rgba(0, 0, 0, 0.298039) 0px 1px 4px -1px';
+                controlUI.style.backgroundColor = '#fff';
+                controlUI.style.border = '2px solid #fff';
+                controlUI.style.borderRadius = '2px';
+                controlUI.style.marginBottom = '22px';
+                controlUI.style.marginTop = '10px';
+                controlUI.style.textAlign = 'center';
+                controlDiv.appendChild(controlUI);
+				
+				if (isFinal) {
+					let controlButton = document.createElement('div');
+					controlButton.style.color = 'rgb(25,25,25)';
+					controlButton.style.fontFamily = 'Roboto,Arial,sans-serif';
+					controlButton.style.fontSize = '150%';
+					controlButton.style.padding = '6px';
+					controlButton.innerHTML = '<input type="submit" id="send" onclick="sendCoords()" value="отправить" />';
+					controlUI.appendChild(controlButton);
+				}
+				
+                let controlText = document.createElement('div');
+                controlText.style.color = 'rgb(25,25,25)';
+                controlText.style.fontFamily = 'Roboto,Arial,sans-serif';
+                controlText.style.fontSize = '150%';
+                controlText.style.padding = '6px';
+                controlText.innerText = text;
+                controlUI.appendChild(controlText);
+            }
+            let infoBoxDiv = document.createElement('div');
+			let text = 'Укажите 7 точек предстоящего маршрута';
+            let infoBox = new makeInfoBox(infoBoxDiv, map, text, isFinal);
+            infoBoxDiv.index = 1;
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(infoBoxDiv);
+			
+			document.addEventListener('keydown', function(event) {
+				if (event.ctrlKey && event.key === 'z' && points_cain.length !== 0) {
+					if (points_cain.length == 7) {
+						points[points.length - 1].setVisible(false);
+						points.splice((points.length - 1),1);
+						points_cain.splice((points_cain.length - 1),1);
+						isFinal = false;
+						map.controls[google.maps.ControlPosition.TOP_CENTER].pop();
+						text = 'Укажите 7 точек предстоящего маршрута';
+						infoBoxFinalDiv = document.createElement('div');
+						infoBoxFinal = new makeInfoBox(infoBoxFinalDiv, map, text, isFinal);
+						map.controls[google.maps.ControlPosition.TOP_CENTER].push(infoBoxFinalDiv);
+					} else {
+						points[points.length - 1].setVisible(false);
+						points.splice((points.length - 1),1);
+						points_cain.splice((points_cain.length - 1),1);
+					}
+				}
+			});
+			
+            map.addListener('click', (point) => {
+				if (points_cain.length < 7) {
+					points_cain[points_cain.length] = {lat: null, lng: null};
+					points_cain[points_cain.length - 1].lat = point.latLng.lat();
+					points_cain[points_cain.length - 1].lng = point.latLng.lng();
+					points[points.length] = new google.maps.Marker({
+						position: points_cain[points_cain.length - 1],
+						map: map,
+					});
+					if (points_cain.length == 7) {
+						isFinal = true;
+						map.controls[google.maps.ControlPosition.TOP_CENTER].pop();
+						let finalText = 'маршрут готов к отправке!';
+						let infoBoxFinalDiv = document.createElement('div');
+						let infoBoxFinal = new makeInfoBox(infoBoxFinalDiv, map, finalText, isFinal);
+						infoBoxFinalDiv.index = 2;
+						map.controls[google.maps.ControlPosition.TOP_CENTER].push(infoBoxFinalDiv);
+					}
+				}
+            });
+            
+        }
+    </script>
+
+  </body>
+</html>
