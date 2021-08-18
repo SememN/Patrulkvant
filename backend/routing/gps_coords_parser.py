@@ -15,4 +15,4 @@ def get_coords(gprmc: str):
     if lon_dir == 'W':
         lon = float(f'-{float(lon[0:2]) + (float(lon[3:]) / 60)}')
 
-    return {'y': lat, 'x': lon}
+    return {'lat': lat, 'lng': lon}
