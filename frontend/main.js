@@ -40,7 +40,7 @@ server.route([{
 		await client.connect();
 		let coords_data = {
 			title: "coords",
-			content: most
+			content: JSON.parse(most)
 		}
 		let result = await coords.insertOne(coords_data);
 	}
