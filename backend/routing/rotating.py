@@ -2,6 +2,7 @@ from math import sqrt, pi, acos
  
 import accepter
 import gps_coords_parser
+import point_checker
 
 
 def calc_distance(start: dict, point: dict): 
@@ -47,11 +48,22 @@ start_coords = gps_coords_parser.get_coords('$GPRMC,104725.00,A,5509.10700,N,061
  
  
 # cycle to get all rotations for the robot
-for i in range(7): 
+for i in range(7):
     current_coords = accepter.get_current_coords(coords_dict, i)
     distance = calc_distance(start_coords, current_coords) 
     cosine = calc_cos(distance, start_coords, current_coords) 
     degrees = calc_degrees(cosine)
     side = detect_side(start_coords, current_coords, degrees)
+
+    '''
+    import time
+    import gyroscope
+    while point_checker.check_point(coords_from_gps, current_coords):
+        time.sleep(10)
+        if not point_checker.detect_deviation(start_coords, current_coords, coords_from gps):
+            current_coords = coords_from gps
+            gyroscope.rotate(side)
+            '''
+
     print(side)
     start_coords = current_coords
