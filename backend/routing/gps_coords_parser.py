@@ -11,8 +11,8 @@ def get_coords(gprmc: str):
         lat = float(f'-{float(lat[0:2]) + (float(lat[2:]) / 60)}')
 
     if lon_dir == 'E':
-        lon = float(f'{float(lon[0:2]) + (float(lon[3:]) / 60)}')
+        lon = float(f'{float(lon[0:3]) + (float(lon[4:]) / 60)}')
     if lon_dir == 'W':
-        lon = float(f'-{float(lon[0:2]) + (float(lon[3:]) / 60)}')
+        lon = float(f'-{float(lon[0:3]) + (float(lon[4:]) / 60)}')
 
     return {'lat': lat, 'lng': lon}

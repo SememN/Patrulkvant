@@ -12,4 +12,4 @@ def detect_deviation(coords1: dict, coords2: dict, coords3: dict):
 
 
 def check_point(current_coords: dict, point_coords: dict):
-    return int(current_coords['lat'] * 1000) / 1000 == int(point_coords['lat'] * 1000) / 1000 and int(current_coords['lng'] * 1000) / 1000 == int(point_coords['lng']* 1000) / 1000
+    return int(current_coords['lat'] * 100000) / 100000 == int(point_coords['lat'] * 100000) / 100000 and int(current_coords['lng'] * 100000) / 100000 == int(point_coords['lng'] * 100000) / 100000
