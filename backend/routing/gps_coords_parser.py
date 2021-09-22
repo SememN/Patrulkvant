@@ -1,3 +1,4 @@
+import serial
 def get_coords(gprmc: str):
     """converts DDmm.MMMMM and DDDmm.MMMMM formats to normal lat and long"""
     lat = gprmc.split(',')[3]
@@ -16,3 +17,14 @@ def get_coords(gprmc: str):
         lon = float(f'-{float(lon[0:3]) + (float(lon[4:]) / 60)}')
 
     return {'lat': lat, 'lng': lon}
+
+
+def enter():
+    arduino = serial.Serial('COM18', 9600, timeout=10)
+    EntInf = arduino.readline().decode('UTF-8')
+    return EntInf
+
+
+enter()
+
+print(get_coords(enter()))
