@@ -1,0 +1,16 @@
+{
+  "name": "map-info",
+  "version": "1.0.2",
+  "description": "Yes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alenigma",
+  "license": "ISC",
+  "dependencies": {
+    "@here/maps-api-for-javascript": "^1.30.2",
+    "hapi": "^18.1.0",
+    "mongodb": "^4.1.3"
+  }
+}

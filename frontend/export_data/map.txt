@@ -1,0 +1,205 @@
+<html>
+  <head>
+	<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+	<script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+	<script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+	<script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+	<script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+	<style>
+		.controls1 {
+			position: fixed;
+			bottom: 80px;
+			right: 48%;
+			z-index: 9999;
+			width: 30px;
+			height: 30px;
+			text-align: center;
+			line-height: 30px;
+			background: #111111;
+			color: #0F0;
+			cursor: pointer;
+			border-radius: 2px;
+			fontSize: 150%;
+			padding: 6px;
+			line-height: 50%;
+		}
+		.controls2 {
+			position: fixed;
+			bottom: 80px;
+			right: 52%;
+			z-index: 9998;
+			width: 30px;
+			height: 30px;
+			text-align: center;
+			line-height: 30px;
+			background: #111111;
+			color: #0F0;
+			cursor: pointer;
+			border-radius: 2px;
+			fontSize: 150%;
+			padding: 6px;
+			line-height: 50%;
+		}
+		.info {
+			position: fixed;
+			bottom: 0px;
+			right: 0px;
+			z-index: 9997;
+			width: 25%;
+			height: 100%;
+			background: #111111;
+			color: #0F0;
+			cursor: default;
+		}
+		.map {
+			position: fixed;
+			bottom: 0px;
+			left: 0px;
+			z-index: 9998;
+			width: 75%;
+			height: 100%;
+			background: #111111;
+			color: #0F0;
+			cursor: default;
+		}
+		table {
+		   border-collapse: collapse;
+		   border: 1px solid green;
+		   cursor: default;
+		}
+		th {
+		  font-weight: normal;
+		  color: #0A0;
+		  padding: 5px 10px;
+		  cursor: default;
+		}
+		td {
+		  color: #0F0;
+		  border-top: 1px solid #191919;
+		  padding: 5px 10px;
+		  cursor: default;
+		}
+		tr:hover td {
+		  background: #191919;
+		  cursor: default;
+		}
+	</style>
+  </head>
+  <body>
+    <div id="mapContainer" class="map"></div>
+    <div id="mapControl"></div>
+    <script>
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+	
+	let points = [];
+	
+	let platform = new H.service.Platform({
+		'apikey': 'UHODxsjMd1bjKGio7wuuZxoLsIjDAMWOCrnQ0NzqP9E'
+	});
+
+	let maptypes = platform.createDefaultLayers();
+	
+	let center = { lng: 0.0, lat: 0.0 };
+	
+	let linestring = new H.geo.LineString();
+	
+	points.forEach(function(point) {
+		linestring.pushPoint(point.coords);
+	});
+	
+	let polyline = new H.map.Polyline(linestring, { style: { lineWidth: 5, strokeColor: 'rgba(0, 255, 0, 0.5)' }});
+	
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				const pos = {
+					lat: position.coords.latitude,
+					lng: position.coords.longitude
+				};
+				center = pos
+				map(center);
+			}
+		)
+	} else {
+		map(center);
+	}
+	
+	async function map (center) {
+		let map = new H.Map(document.getElementById('mapContainer'), maptypes.vector.normal.map, {
+			zoom: 0,
+			center: center
+		});
+		map.addObject(polyline);
+		window.addEventListener('resize', () => map.getViewPort().resize());
+		let behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+		
+		
+		
+		//for (var key in polyline.getBoundingBox()) {
+		//	console.log(key);
+		//}
+		let ui = H.ui.UI.createDefault(map, maptypes, 'ru-RU');
+		ui.getControl('mapsettings').setDisabled(true)
+		ui.getControl('scalebar').setDisabled(true)
+		let weatherInfo = [];
+		let table = document.getElementById('weather_table');
+		let lrow = table.insertRow(0)
+		lrow.insertCell(0).innerText = "Точка №"
+		lrow.insertCell(1).innerText = "Температура, C°"
+		lrow.insertCell(2).innerText = "Влажность"
+		lrow.insertCell(3).innerText = "Освещение"
+		lrow.insertCell(4).innerText = "Давление"
+		for (let i = 0; i < points.length; i++) {
+			weatherInfo[i] = new H.ui.InfoBubble(points[i].coords, {
+				content: "<b>Температура: </b><br><b>"+points[i].temp+"°C</b><br><b>Влажность: </b><br><b>"+points[i].wet+"%</b><br><b>Освещение: </b><br><b>"+points[i].light+"</b><br><b>Давление: </b><br><b>"+points[i].p+"</b>"
+			});
+			let row = table.insertRow(i+1)
+			row.insertCell(0).innerText = i+1
+			row.insertCell(1).innerText = points[i].temp
+			row.insertCell(2).innerText = points[i].wet + "%"
+			row.insertCell(3).innerText = points[i].light + ""
+			row.insertCell(4).innerText = points[i].p + ""
+		}
+		ui.addBubble(weatherInfo[0]);
+		table.setAttribute("border", "1");
+		
+		let curr_bubble = 0;
+		
+		function next () {
+			if (curr_bubble == weatherInfo.length - 1) return;
+			curr_bubble++
+			ui.addBubble(weatherInfo[curr_bubble]);
+			ui.removeBubble(weatherInfo[curr_bubble-1]);
+		};
+		function previous () {
+			if (curr_bubble == 0) return;
+			curr_bubble--
+			ui.addBubble(weatherInfo[curr_bubble]);
+			ui.removeBubble(weatherInfo[curr_bubble+1]);
+		};
+		
+		document.getElementById("next").addEventListener ("click", next, false);
+		document.getElementById("previous").addEventListener ("click", previous, false);
+		function setStyle(map){
+			map.getBaseLayer().getProvider().setStyle(new H.map.render.webgl.Style('http://localhost:8000/map.yaml', 'https://js.api.here.com/v3/3.1/styles/omv/'));
+		}
+		setStyle(map);
+		map.getViewModel().setLookAtData({bounds: polyline.getBoundingBox()});
+		await sleep(1)
+		let animation = map.getZoom() - 1
+		map.setZoom(0)
+		await sleep(10000)
+		map.setZoom(animation, true)
+	}
+    </script>
+	<input type="submit" class="controls2" id="previous" value="<" />
+	<input type="submit" class="controls1" id="next" value=">" />
+	<table border="1" class="info">
+		<tbody id="weather_table">
+			<caption>Таблица собранной информации</caption>
+		</tbody>
+	</table>
+  </body>
+</html>

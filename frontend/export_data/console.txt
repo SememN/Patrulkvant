@@ -1,0 +1,137 @@
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0"
+		/>
+		<meta name="theme-color" content="#000000" />
+		<title>Starting...</title>
+		<style type="text/css">
+			#typer {
+				word-break: break-all;
+			}
+			.background {
+				background: #000000;
+			}
+			.main {
+			  min-height: 100%;
+			  max-height: 100%;
+			  overflow-y: hidden;
+			  overflow-x: hidden;
+			  padding-left: 8px;
+			  padding-top: 8px;
+			  -ms-overflow-style: none;
+			  scrollbar-width: none;
+			}
+			.theme_color {
+				color: #0F0; 
+			}
+			.bottom_padding {
+				height: 50px;
+			}
+			html, body {
+			  min-height: 100%;
+			  height: 100%; }
+
+			body {
+			  background: #000000;
+			  font-family: monospace;
+			  margin: 0;
+			  padding: 0;
+			  font-size: 13px; }
+			
+			.main::-webkit-scrollbar {
+				width: 0;
+				height: 0;
+			}
+			.ip-header {
+				position: fixed;
+				top: 0;
+				left: 0;
+				z-index: 100;
+				width: 100%;
+				height: 100%;
+				background: #000;
+			}
+			.verticalhorizontal {
+				display: table-cell;
+				height: 20%;
+				left: 50%;
+				width: 20%;
+				top: 45%;
+				text-align: center;
+				vertical-align: middle;
+			}
+			#kvant {
+				height: 30%;
+				width: 30%;
+			}
+		</style>
+	</head>
+	<body>
+	<div id="ip-container" class="ip-container">
+		<header class="ip-header" id="preload">
+			<div class="verticalhorizontal">
+				<img src="https://media.discordapp.net/attachments/754292449475690566/901811567761432586/kvantorium.png?width=702&height=702" alt="KVANTORIUM" id="kvant" />
+				<h1 id="conn" class="theme_color">Connecting to Quantorium networks</h1>
+			</div>
+		</header>
+		<div class="ip-main">
+			<div id="font_div"></div>
+			<div id="main" class="main theme_color">
+				<pre style="word-wrap: break-word; white-space: pre-wrap;" id="scroll"><span id="typer" class="typer"></span><span id="cursor">|</span><div id="bottom_padding" class="bottom_padding"></div></pre>
+			</div>
+			<script>
+				let conn = document.getElementById("conn");
+				setInterval(loading, 200);
+				function loading () {
+					if (conn.innerHTML.endsWith('...')) {
+						let split = conn.innerHTML.split("");
+						split.splice(split.length-3);
+						conn.innerHTML = split.join("");
+					} else {
+						conn.innerHTML = conn.innerHTML + ".";
+					}
+				}
+				window.onload = async function() {
+					await sleep(5000);
+					document.getElementById("preload").style.display = "none";
+					let typer = document.getElementById('typer');
+					let cursor = document.getElementById('cursor');
+					let scroll = document.getElementById('scroll');
+					let cursor_blink_interval = setInterval(cursor_blink, 500);
+					let blah = ``.split("");
+					let print_interval = setInterval(print, 5);
+					let speed = 1;
+					
+					function sleep(ms) {
+						return new Promise(resolve => setTimeout(resolve, ms));
+					}
+					
+					async function print () {
+						if (blah.length) {
+							let add = blah.shift()
+							typer.innerHTML = typer.innerHTML + add;
+							let strings = typer.innerHTML.split("\n");
+							if (strings.length >= 50) {strings.shift(); typer.innerHTML = strings.join("\n")}
+							//window.scrollTo(0,scroll.scrollHeight);
+							await sleep(1000)
+						} else {
+							window.location = "/final"
+						}
+					}
+					
+					function cursor_blink () {
+						if (cursor.innerHTML == "|") {
+							cursor.innerHTML = "";
+						} else {
+							cursor.innerHTML = "|";
+						}
+					}
+				}
+			</script>
+		</div>
+	</div>
+	</body>
+</html>
