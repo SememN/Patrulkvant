@@ -3,7 +3,7 @@ const {MongoClient} = require('mongodb');
 async function debug () {
 		const uri = "mongodb+srv://Alenigma:WhatAreYouDoingInMySwamp@patrulkvant.ramkj.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 		
-		let points = `{coords: { lat: 52.5309825, lng: 13.3845921 }, temp: 17.4, wet: 27, light: 25, p: 56},{coords: { lat: 52.5311923, lng: 13.3853495 }, temp: 17.4, wet: 27, light: 25, p: 56}`
+		let points = `{coords: { lat: 52.5309825, lng: 13.3845921 }, temp: 17.4, wet: 27, light: 25, p: 56, main: 1},{coords: { lat: 52.53, lng: 13.38 }, main: 0},{coords: { lat: 52.5311923, lng: 13.3853495 }, temp: 17.4, wet: 27, light: 25, p: 56, main: 1}`
 
 		const client = new MongoClient(uri);
 
