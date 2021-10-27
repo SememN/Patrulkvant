@@ -1,10 +1,9 @@
-import serial
+import time
 
 
 class Functions(object):
     def __init__(self):
-        # you should define this var in main file
-        self.arduino: serial.Serial()
+        # you should define this var in controller
         self.arduino = None
 
     # clean the serial port in arduino
@@ -13,11 +12,11 @@ class Functions(object):
         return
 
     # initializing the gyroscope
-    def read_gyroscope(self):
-        while True:
-            line = self.arduino.readline().decode('utf-8')
-            if line.startswith('gyroscope: '):
-                return line.split(':')[1][1:]
+    def read_data(self):
+        self.arduino.write('d'.encode('utf-8'))
+        time.sleep(5)
+        data = self.arduino.readline()
+        return str(data[2:-1]).split(',')
 
     # get coordinates from GPS
     def read_coords(self):
