@@ -26,10 +26,18 @@ class Functions(object):
                 return line
 
     # part of riding to arduino
-    def drive(self):
-        self.arduino.write('drive')
-        return 'asd'
+    def driving(self):
+        self.arduino.write('g')
+        return
 
     def stop(self):
-        self.arduino.write('stop')
+        self.arduino.write('b')
+        return
+
+    def right_and_left(self):
+        self.arduino.write('t')
+        return
+
+    def stop(self):
+        self.arduino.write('s')
         return
