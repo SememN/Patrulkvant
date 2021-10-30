@@ -33,9 +33,13 @@ class Functions(object):
 
     # part of riding to arduino
     def drive(self):
-        self.arduino.write('drive')
-        return 'asd'
+        self.arduino.write('g'.encode('utf-8'))
+
+    def drive_back(self):
+        self.arduino.write('b'.encode('utf-8'))
+
+    def rotate(self, degrees):
+        self.arduino.write(f'r{degrees}'.encode('utf-8'))
 
     def stop(self):
-        self.arduino.write('stop')
-        return
+        self.arduino.write('s'.encode('utf-8'))
