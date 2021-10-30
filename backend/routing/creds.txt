@@ -1,2 +1,4 @@
 порт_ардуино
 порт_джипиэс
+test_num
+sec_for_second_test
