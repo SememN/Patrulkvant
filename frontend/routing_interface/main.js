@@ -32,7 +32,7 @@ server.route([{
   },
   handler: function (request, response){
     let most = request.payload.most
-	const uri = "mongodb+srv://Sam:2128506menemMENEM123@cluster0.7bhv1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+	const uri = "mongodb+srv://{Username}:{Password}@cluster0.7bhv1.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 	async function main (most) {
 		const client = new MongoClient(uri);
 		let db = client.db("patrul_coords");
