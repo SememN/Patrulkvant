@@ -35,7 +35,7 @@
   <body>
     <div id="map"></div>
     <script defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDsw8iKKW1a6gmOjqqz10flbhHbCo_6OdQ
+        src="https://maps.googleapis.com/maps/api/js?key={key}
         &libraries=visualization&callback=initMap">
     </script>
 	
